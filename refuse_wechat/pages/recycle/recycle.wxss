@@ -1,0 +1,234 @@
+/* recycle.wxss */
+.container {
+  background-color: #f8f8f8;
+  min-height: 100vh;
+}
+
+.location-bar {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 10;
+}
+
+.location-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
+}
+
+.location-text {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+}
+
+.map-container {
+  width: 100%;
+  height: 500rpx;
+  background-color: #eee;
+}
+
+.stations-section {
+  padding: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-left: 10rpx;
+  border-left: 8rpx solid #1296db;
+}
+
+.stations-list {
+  background-color: #fff;
+  border-radius: 20rpx;
+  
+}
+
+.station-item {
+  display: flex;
+  padding: 20rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.station-item:last-child {
+  border-bottom: none;
+}
+
+.station-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 10rpx;
+  margin-right: 20rpx;
+}
+
+.station-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.station-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.station-address {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  display: block;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+
+}
+
+.station-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.station-distance,
+.station-hours {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.station-services {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.service-tag {
+  background-color: #e8f4fd;
+  color: #1296db;
+  font-size: 24rpx;
+  padding: 5rpx 15rpx;
+  border-radius: 50rpx;
+  margin-right: 10rpx;
+  margin-bottom: 5rpx;
+}
+
+/* 站点详情弹窗 */
+.station-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border-top-left-radius: 30rpx;
+  border-top-right-radius: 30rpx;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.close-btn {
+  font-size: 60rpx;
+  color: #999;
+  line-height: 40rpx;
+}
+
+.modal-image {
+  width: 100%;
+  height: 300rpx;
+}
+
+.modal-body {
+  padding: 30rpx;
+}
+
+.modal-station-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+  display: block;
+}
+
+.modal-info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.info-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 15rpx;
+}
+
+.modal-info-item text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.modal-services {
+  margin-top: 20rpx;
+}
+
+.services-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 10rpx;
+}
+
+.modal-actions {
+  display: flex;
+  padding: 20rpx 30rpx;
+  border-top: 2rpx solid #f0f0f0;
+}
+
+.action-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  font-size: 30rpx;
+}
+
+.action-btn.primary {
+  background-color: #1296db;
+  color: #fff;
+}

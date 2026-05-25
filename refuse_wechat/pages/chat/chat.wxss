@@ -1,0 +1,90 @@
+/* 基础样式重置 */
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+/* 聊天消息区域 - 使用绝对定位 */
+.chat-messages {
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* 消息项通用样式 */
+.message {
+  display: flex;
+  margin-bottom: 50rpx;
+  align-items: flex-start;
+}
+
+/* 用户消息样式 */
+.user-message {
+  justify-content: flex-end;
+  margin-top: 30rpx; 
+}
+
+/* AI消息样式 */
+.ai-message {
+  justify-content: flex-start;
+  margin-top: 30rpx; 
+}
+
+/* 头像样式 */
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* 消息内容样式 */
+.message-content {
+  max-width: 70%;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  word-break: break-word;
+  position: relative;
+}
+
+/* 用户消息样式 - 右侧 */
+.user-message .message-content {
+  background-color: #95ec69;
+  margin-left: 20rpx;
+  margin-right: 20rpx;
+}
+
+/* AI消息样式 - 左侧 */
+.ai-message .message-content {
+  background-color: #f0f0f0;
+  margin-left: 20rpx;
+  margin-right: 20rpx;
+}
+
+/* 固定在底部的输入区域 */
+.input-section {
+  display: flex;
+  padding: 20rpx;
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: 1rpx solid #eee;
+}
+
+.chat-input {
+  flex: 1;
+  border: 1rpx solid #ddd;
+  border-radius: 40rpx;
+  padding: 0 20rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+}
+
+.send-button {
+  width: 120rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #1989fa;
+  color: #fff;
+  border-radius: 40rpx;
+  padding: 0;
+}

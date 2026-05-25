@@ -1,0 +1,133 @@
+/* detail.wxss */
+.container {
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+}
+
+.loading-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border: 8rpx solid #f3f3f3;
+  border-top: 8rpx solid #1296db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.news-detail {
+  padding-bottom: 100rpx;
+}
+
+.news-header {
+  padding: 30rpx;
+}
+
+.news-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  line-height: 56rpx;
+  display: block;
+}
+
+.news-cover {
+  width: 100%;
+  height: 400rpx;
+  margin-bottom: 20rpx;
+}
+
+.news-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30rpx 20rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+  margin-bottom: 30rpx;
+}
+
+.info-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.author,
+.source,
+.date {
+  font-size: 26rpx;
+  color: #999;
+  margin-right: 20rpx;
+}
+
+.category {
+  font-size: 24rpx;
+  color: #1296db;
+  background-color: #e8f4fd;
+  padding: 5rpx 15rpx;
+  border-radius: 50rpx;
+}
+
+.news-content {
+  padding: 0 30rpx;
+}
+
+.content-paragraph {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 50rpx;
+  margin-bottom: 20rpx;
+  display: block;
+  text-indent: 60rpx;
+}
+
+.content-image {
+  width: 100%;
+  height: auto;
+  margin: 20rpx 0;
+  border-radius: 10rpx;
+}
+
+.news-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20rpx 0;
+  background-color: #fff;
+  border-top: 2rpx solid #f0f0f0;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-icon {
+  width: 50rpx;
+  height: 50rpx;
+  margin-bottom: 10rpx;
+}
+
+.action-item text {
+  font-size: 26rpx;
+  color: #666;
+}

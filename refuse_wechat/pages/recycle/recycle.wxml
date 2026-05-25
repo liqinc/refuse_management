@@ -1,0 +1,92 @@
+<!-- recycle.wxml -->
+<navigation-bar title="站点回收" background="#fff" color="#000" back="true"></navigation-bar>
+
+<view class="container" style="padding-top: 100rpx;">
+  <!-- 位置信息 -->
+  <view class="location-bar">
+    <image src="/images/location.png" class="location-icon" />
+    <text class="location-text">{{currentLocation}}</text>
+  </view>
+
+  <!-- 地图容器 -->
+  <view class="map-container">
+    <map 
+      id="myMap" 
+      longitude="{{currentLongitude}}" 
+      latitude="{{currentLatitude}}" 
+      markers="{{markers}}" 
+      show-location="true" 
+      style="width: 100%; height: 100%;"
+      bindmarkertap="showStationDetail"
+    ></map>
+  </view>
+
+  <!-- 附近站点列表 -->
+  <view class="stations-section">
+    <view class="section-title">附近回收站点</view>
+    <view class="stations-list">
+      <block wx:for="{{recycleStations}}" wx:key="id">
+        <view class="station-item" bindtap="showStationDetail" data-id="{{item.id}}">
+          <image src="{{item.image}}" class="station-image" />
+          <view class="station-info">
+            <text class="station-name">{{item.name}}</text>
+            <text class="station-address">{{item.address}}</text>
+            <view class="station-meta">
+              <text class="station-distance">{{item.distance}}</text>
+              <text class="station-hours">{{item.openingHours}}</text>
+            </view>
+            <view class="station-services">
+              <block wx:for="{{item.services}}" wx:key="index">
+                <text class="service-tag">{{item}}</text>
+              </block>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 站点详情弹窗 -->
+  <view class="station-detail-modal" wx:if="{{showStationDetail}}">
+    <view class="modal-overlay" bindtap="closeStationDetail"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">站点详情</text>
+        <view class="close-btn" bindtap="closeStationDetail">×</view>
+      </view>
+      
+      <image src="{{selectedStation.image}}" class="modal-image" />
+      
+      <view class="modal-body">
+        <text class="modal-station-name">{{selectedStation.name}}</text>
+        <view class="modal-info-item">
+          <image src="/images/address-icon.png" class="info-icon" />
+          <text>{{selectedStation.address}}</text>
+        </view>
+        <view class="modal-info-item">
+          <image src="/images/distance-icon.png" class="info-icon" />
+          <text>{{selectedStation.distance}}</text>
+        </view>
+        <view class="modal-info-item">
+          <image src="/images/time-icon.png" class="info-icon" />
+          <text>营业时间：{{selectedStation.openingHours}}</text>
+        </view>
+        <view class="modal-info-item">
+          <image src="/images/phone-icon.png" class="info-icon" />
+          <text>{{selectedStation.phone}}</text>
+        </view>
+        <view class="modal-services">
+          <text class="services-label">提供服务：</text>
+          <block wx:for="{{selectedStation.services}}" wx:key="index">
+            <text class="service-tag">{{item}}</text>
+          </block>
+        </view>
+      </view>
+      
+      <view class="modal-actions">
+        <button class="action-btn" bindtap="callPhone">联系站点</button>
+        <button class="action-btn primary" bindtap="navigateToStation">导航前往</button>
+      </view>
+    </view>
+  </view>
+</view>

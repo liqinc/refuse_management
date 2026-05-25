@@ -1,0 +1,33 @@
+<!-- chat.wxml -->
+<view class="container">
+  <scroll-view 
+    class="chat-messages" 
+    scroll-y 
+    scroll-top="{{scrollTop}}"
+    scroll-with-animation
+    style="height: 1325rpx; display: block; box-sizing: border-box; left: 0rpx; top: 0rpx; position: absolute"
+  >
+    <block wx:for="{{messages}}" wx:key="id">
+      <!-- 用户消息 - 右侧 -->
+      <view wx:if="{{item.type === 'user'}}" class="message user-message" style="justify-content: flex-end">
+        <view class="message-content user-content">
+          <text>{{item.content}}</text>
+        </view>
+        <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill" binderror="handleAvatarError"/>
+      </view>
+      
+      <!-- AI消息 - 左侧 -->
+      <view wx:else class="message ai-message" style="justify-content: flex-start; position: relative; left: 2rpx; top: 27rpx">
+        <image style="width: 79rpx; height: 79rpx; display: block; box-sizing: border-box" class="avatar" src="/images/ai-avatar.png" mode="aspectFill"/>
+        <view class="message-content ai-content" style="position: relative; left: -8rpx; top: 0rpx">
+          <text>{{item.content}}</text>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+
+  <view class="input-section" style="position: fixed; left: 2rpx; top: 1326rpx">
+    <input style="width: 375rpx; display: block; box-sizing: border-box; left: 0rpx; top: 0rpx" class="chat-input" placeholder="请输入消息" bindinput="onInputChange" value="{{inputValue}}" confirm-type="send" bindconfirm="sendMessage"/>
+    <button class="send-button" bindtap="sendMessage" style="width: 175rpx; display: block; box-sizing: border-box; left: 0rpx; top: 0rpx">发送</button>
+  </view>
+</view>

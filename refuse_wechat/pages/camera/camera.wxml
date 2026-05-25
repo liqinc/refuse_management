@@ -1,0 +1,49 @@
+<!-- camera.wxml -->
+<navigation-bar title="垃圾图像分类识别" background="#f5f5f5" color="#333" back="true" bindback="onBackTap"></navigation-bar>
+
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-title">
+    <text>垃圾图像分类识别</text>
+  </view>
+
+  <!-- 提示信息 -->
+  <view class="page-description">
+    <text>请上传或拍摄垃圾图片进行识别</text>
+  </view>
+
+  <!-- 图片显示区域 -->
+  <view class="image-container" style="position: relative; left: 0rpx; top: -56rpx; height: 437rpx; display: flex; box-sizing: border-box">
+    <view class="image-placeholder" wx:if="{{!src}}">
+      <text>图片将显示在这里</text>
+    </view>
+    <image src="{{src}}" class="result-image" mode="aspectFit" wx:if="{{src}}" />
+  </view>
+
+   <!--显示识别结果-->
+   <view class="usermotto" style="position: relative; top: -135rpx">
+    <text>{{motto}}</text>
+    <text decode="true">&nbsp;</text>
+    <text>{{result}}</text>
+  </view>
+
+  <!-- 按钮区域 -->
+  <view class="buttons-container" style="position: relative; left: -8rpx; top: -135rpx">
+    <!-- 本地上传按钮 -->
+    <button class="upload-btn" bindtap="chooseImage">
+      <text>本地上传</text>
+    </button>
+    
+    <!-- 拍摄按钮 -->
+    <button class="shoot-btn" bindtap="takePhoto" disabled="{{isTakingPhoto}}" type="primary">
+      {{isTakingPhoto ? '拍照中...' : '拍照'}}
+    </button>
+    
+    <!-- 开始识别按钮 -->
+    <button class="identify-btn" bindtap="reidentifyGarbage" disabled="{{!src || isIdentifying || result}}" type="primary">
+      {{isIdentifying ? '识别中...' : '开始识别'}}
+    </button>
+  </view>
+
+
+</view>

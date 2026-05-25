@@ -1,0 +1,201 @@
+<!--guide.wxml-->
+<!-- 自定义导航栏 -->
+<view class="custom-nav" style="padding-top: {{statusBarHeight}}px;">
+  <view class="nav-back" bindtap="goBack">
+    <text class="back-icon">←</text>
+  </view>
+  <view class="nav-title">垃圾分类指南</view>
+</view>
+
+<view class="container">
+  <!-- 分类指南内容 -->
+  <view class="guide-container">
+    <!-- 分类标签 -->
+    <view class="tab-container">
+      <view class="tab {{currentTab==0?'active':''}}" data-tab="0" bindtap="switchTab">可回收物</view>
+      <view class="tab {{currentTab==1?'active':''}}" data-tab="1" bindtap="switchTab">厨余垃圾</view>
+      <view class="tab {{currentTab==2?'active':''}}" data-tab="2" bindtap="switchTab">有害垃圾</view>
+      <view class="tab {{currentTab==3?'active':''}}" data-tab="3" bindtap="switchTab">其他垃圾</view>
+    </view>
+    
+    <!-- 分类内容 -->
+    <view class="tab-content">
+      <!-- 可回收物 -->
+      <view class="content-item" wx:if="{{currentTab==0}}">
+        <view class="category-header">
+          <view class="category-icon">♻️</view>
+          <view class="category-title">可回收物</view>
+        </view>
+        <view class="category-desc">可回收物是指适宜回收和可循环再利用的废弃物。</view>
+        
+        <view class="item-list">
+          <view class="guide-item">
+            <view class="item-title">纸类</view>
+            <view class="item-examples">报纸、杂志、图书、纸板箱、包装纸等</view>
+            <view class="item-tips">注意：纸巾和厕所纸由于水溶性太强不可回收</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">塑料</view>
+            <view class="item-examples">塑料瓶、塑料盒、塑料玩具、塑料衣架等</view>
+            <view class="item-tips">投放前请清空内容物，清洁后压扁投放</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">金属</view>
+            <view class="item-examples">易拉罐、罐头盒、金属厨具、金属玩具等</view>
+            <view class="item-tips">投放前请清空内容物并清洁干净</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">玻璃</view>
+            <view class="item-examples">玻璃瓶、玻璃杯、玻璃制品等</view>
+            <view class="item-tips">投放时请注意安全，避免割伤</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">织物</view>
+            <view class="item-examples">废弃衣服、床单、毛巾、书包等</view>
+            <view class="item-tips">保持干燥清洁，污损严重的织物请投入其他垃圾</view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 厨余垃圾 -->
+      <view class="content-item" wx:if="{{currentTab==1}}">
+        <view class="category-header">
+          <view class="category-icon">🍎</view>
+          <view class="category-title">厨余垃圾</view>
+        </view>
+        <view class="category-desc">厨余垃圾是指日常生活中产生的食物残渣、果皮等易腐烂的生物质废弃物。</view>
+        
+        <view class="item-list">
+          <view class="guide-item">
+            <view class="item-title">食物残渣</view>
+            <view class="item-examples">剩菜剩饭、骨头、菜根菜叶等</view>
+            <view class="item-tips">投放前尽量沥干水分</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">果皮果核</view>
+            <view class="item-examples">苹果核、香蕉皮、西瓜皮、果肉等</view>
+            <view class="item-tips">大型果核如桃核、芒果核等建议投入其他垃圾</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">茶渣咖啡渣</view>
+            <view class="item-examples">茶叶渣、咖啡渣、咖啡滤纸等</view>
+            <view class="item-tips">投放前尽量沥干水分</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">宠物饲料</view>
+            <view class="item-examples">宠物饲料、宠物粮食等</view>
+            <view class="item-tips">不包括猫砂、尿片等</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">中药药渣</view>
+            <view class="item-examples">中药材、中药药渣等</view>
+            <view class="item-tips">不包括西药、药品包装</view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 有害垃圾 -->
+      <view class="content-item" wx:if="{{currentTab==2}}">
+        <view class="category-header">
+          <view class="category-icon">⚠️</view>
+          <view class="category-title">有害垃圾</view>
+        </view>
+        <view class="category-desc">有害垃圾是指对人体健康或自然环境造成直接或潜在危害的废弃物。</view>
+        
+        <view class="item-list">
+          <view class="guide-item">
+            <view class="item-title">电池</view>
+            <view class="item-examples">干电池、纽扣电池、充电电池等</view>
+            <view class="item-tips">投放时请注意轻放，避免破损</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">灯管</view>
+            <view class="item-examples">荧光灯管、节能灯、灯泡等</view>
+            <view class="item-tips">易破损的灯管请用纸包好再投放</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">药品</view>
+            <view class="item-examples">过期药品、药物胶囊、药片、药水等</view>
+            <view class="item-tips">请将药品从包装中取出后分类投放</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">油漆</view>
+            <view class="item-examples">油漆桶、染发剂壳、过期化妆品等</view>
+            <view class="item-tips">投放前请确保容器密封</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">其他有害物品</view>
+            <view class="item-examples">水银温度计、消毒剂、杀虫剂等</view>
+            <view class="item-tips">请妥善包装后投放，避免泄漏</view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 其他垃圾 -->
+      <view class="content-item" wx:if="{{currentTab==3}}">
+        <view class="category-header">
+          <view class="category-icon">🗑️</view>
+          <view class="category-title">其他垃圾</view>
+        </view>
+        <view class="category-desc">其他垃圾是指除可回收物、厨余垃圾、有害垃圾以外的其他生活废弃物。</view>
+        
+        <view class="item-list">
+          <view class="guide-item">
+            <view class="item-title">卫生纸巾</view>
+            <view class="item-examples">纸巾、卫生纸、尿不湿、卫生巾等</view>
+            <view class="item-tips">有害污染的纸巾请包裹后投放</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">污损物品</view>
+            <view class="item-examples">污损纸张、污损塑料、污损织物等</view>
+            <view class="item-tips">严重污损无法回收的物品投入其他垃圾</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">复合材质</view>
+            <view class="item-examples">牙刷、一次性餐具、大骨头等</view>
+            <view class="item-tips">难以分离的复合材质物品投入其他垃圾</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">烟蒂</view>
+            <view class="item-examples">烟蒂、烟盒等</view>
+            <view class="item-tips">投放前请确保烟蒂已熄灭</view>
+          </view>
+          
+          <view class="guide-item">
+            <view class="item-title">灰土</view>
+            <view class="item-examples">灰土、渣土、猫砂等</view>
+            <view class="item-tips">投放前请装袋密封</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 搜索功能 -->
+  <view class="search-container">
+    <view class="search-header">不知道如何分类？</view>
+    <view class="search-box">
+      <input class="search-input" placeholder="输入物品名称查询分类" bindinput="onSearchInput" value="{{searchText}}"/>
+      <button class="search-btn" bindtap="searchItem">查询</button>
+    </view>
+    <view class="search-result" wx:if="{{searchResult}}">
+      <view class="result-title">查询结果：</view>
+      <view class="result-content">{{searchResult}}</view>
+    </view>
+  </view>
+</view>

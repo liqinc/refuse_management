@@ -1,0 +1,64 @@
+<!--index.wxml-->
+<!--自定义导航栏-->
+<navigation-bar title="首页" back="false"></navigation-bar>
+<view class="container" style="position: relative; left: 0rpx; width: 100%; box-sizing: border-box">
+  <!-- 轮播图 -->
+  <swiper class="swiper" indicator-dots="true" autoplay="true" interval="3000" duration="500">
+    <block wx:for="{{swiperImages}}" wx:key="index">
+      <swiper-item>
+        <image style="display: inline-block; box-sizing: border-box; position: relative; z-index: 10; left: 0rpx; top: 0rpx" src="{{item}}" class="swiper-image" />
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <!-- 导航 -->
+  <view class="nav-grid" style="position: relative; left: 48rpx; width: 656rpx; display: flex; box-sizing: border-box; top: 75rpx">
+    <block wx:for="{{navItems}}" wx:key="index">
+      <view class="nav-item" bindtap="navigateToPage" data-index="{{index}}">
+        <image src="{{item.icon}}" class="nav-icon" />
+        <text class="nav-text">{{item.text}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 垃圾资讯推荐 -->
+  <view class="news-section" style="position: relative; left: 36rpx; width: 677rpx; display: block; box-sizing: border-box; top: 143rpx">
+    <view class="news-title">
+      <image src="/images/news-icon.png" class="news-title-icon" />
+      <text>垃圾资讯推荐</text>
+    </view>
+    <view class="news-list">
+      <block wx:for="{{newsList}}" wx:key="index">
+        <view class="news-item" bindtap="goToNewsDetail" data-id="{{item.id}}">
+          <image src="{{item.image}}" class="news-image" />
+          <view class="news-content">
+            <text class="news-text">{{item.title}}</text>
+            <text class="news-subtext">{{item.subtitle}}</text>
+            <view class="news-meta">
+              <text class="news-date">{{item.date}}</text>
+              <view class="news-stats">
+                <image src="/images/views-icon.png" class="news-stats-icon" />
+                <text>{{item.views}}</text>
+                <image src="/images/likes-icon.png" class="news-stats-icon" />
+                <text>{{item.likes}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+<!-- 悬浮窗 -->
+<view
+    class="floating-button"
+    bindtouchstart="onFloatButtonTouchStart"
+    bindtouchmove="onFloatButtonTouchMove"
+    bindtouchend="onFloatButtonTouchEnd"
+    catchtouchmove="onFloatButtonTouchMove"
+    style="left: {{floatButtonLeft}}rpx; bottom: {{floatButtonBottom}}rpx;"
+    bindtap="openAI">
+    <image src="/images/ai-icon.png" mode="aspectFill" class="ai-icon" style="height: 52rpx; display: inline-block; box-sizing: border-box; left: 0rpx; top: 0rpx; position: relative"></image>
+  </view>
+
+</view>

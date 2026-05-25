@@ -1,0 +1,63 @@
+<!-- news.wxml -->
+<navigation-bar title="垃圾资讯" background="#fff" color="#000" back="true"></navigation-bar>
+
+<view class="news-container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <image src="/images/search.png" class="search-icon" />
+    <input type="text" placeholder="搜索资讯内容" class="search-input" bindinput="onSearchInput" bindconfirm="onSearchConfirm" value="{{searchKeyword}}" />
+  </view>
+
+  <!-- 分类导航 -->
+  <view class="category-bar">
+    <scroll-view scroll-x="true" enable-flex>
+      <view class="category-list">
+        <block wx:for="{{categories}}" wx:key="id">
+          <view class="category-item {{item.selected ? 'selected' : ''}}" bindtap="changeCategory" data-id="{{item.id}}">
+            <text>{{item.name}}</text>
+            <view class="category-underline" wx:if="{{item.selected}}"></view>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 资讯列表 -->
+  <view class="news-list">
+    <block wx:for="{{newsList}}" wx:key="id">
+      <view class="news-item" bindtap="goToDetail" data-id="{{item.id}}">
+        <image src="{{item.image}}" class="news-image" />
+        <view class="news-content">
+          <text class="news-title">{{item.title}}</text>
+          <text class="news-subtitle">{{item.subtitle}}</text>
+          <view class="news-meta">
+            <text class="news-date">{{item.date}}</text>
+            <view class="news-stats">
+              <image src="/images/views-icon.png" class="news-stats-icon" />
+              <text>{{item.views}}</text>
+              <image src="/images/likes-icon.png" class="news-stats-icon" />
+              <text>{{item.likes}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
+    </view>
+    
+    <!-- 没有更多数据 -->
+    <view class="no-more" wx:if="{{!hasMore && newsList.length > 0}}">
+      <text>没有更多数据了</text>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{newsList.length === 0 && !loading}}">
+      <image src="/images/empty.png" class="empty-image" />
+      <text>暂无相关资讯</text>
+    </view>
+  </view>
+</view>

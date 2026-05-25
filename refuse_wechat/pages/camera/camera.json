@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "拍照识别",
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar"
+  },
+  "navigationBarBackgroundColor": "#000",
+  "navigationBarTextStyle": "white",
+  "navigationStyle": "custom"
+}

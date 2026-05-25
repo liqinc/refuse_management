@@ -1,0 +1,39 @@
+<!--history.wxml-->
+<!-- 自定义导航栏 -->
+<view class="custom-nav" style="padding-top: {{statusBarHeight}}px;">
+  <view class="nav-back" bindtap="goBack">
+    <text class="back-icon">←</text>
+  </view>
+  <view class="nav-title">历史记录</view>
+</view>
+
+<view class="container">
+  <!-- 历史记录列表 -->
+  <view class="history-list" wx:if="{{historyList.length > 0}}">
+    <view class="history-item" wx:for="{{historyList}}" wx:key="id">
+      <view class="history-image">
+        <image src="{{item.image}}" mode="aspectFill"></image>
+      </view>
+      <view class="history-info">
+        <view class="history-result">{{item.result}}</view>
+        <view class="history-time">{{item.time}}</view>
+      </view>
+      <view class="history-actions">
+        <view class="action-btn delete-btn" data-id="{{item.id}}" bindtap="deleteRecord">删除</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">暂无历史记录</view>
+    <view class="empty-subtext">识别垃圾后的结果将显示在这里</view>
+    <button class="go-home-btn" bindtap="goHome">去识别垃圾</button>
+  </view>
+  
+  <!-- 底部操作区 -->
+  <view class="bottom-actions" wx:if="{{historyList.length > 0}}">
+    <button class="clear-btn" bindtap="clearHistory">清空历史记录</button>
+  </view>
+</view>

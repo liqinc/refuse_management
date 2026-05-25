@@ -1,0 +1,61 @@
+<!-- detail.wxml -->
+<navigation-bar title="资讯详情" background="#fff" color="#000" back="true"></navigation-bar>
+
+<view class="container" style="padding-top: 100rpx;">
+  <!-- 加载中状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 资讯内容 -->
+  <view class="news-detail" wx:else>
+    <!-- 标题 -->
+    <view class="news-header">
+      <text class="news-title">{{newsDetail.title}}</text>
+    </view>
+
+    <!-- 封面图 -->
+    <image src="{{newsDetail.coverImage}}" class="news-cover" mode="aspectFill" />
+
+    <!-- 资讯信息 -->
+    <view class="news-info">
+      <view class="info-left">
+        <text class="author">{{newsDetail.author}}</text>
+        <text class="source">来源：{{newsDetail.source}}</text>
+        <text class="date">{{newsDetail.date}}</text>
+      </view>
+      <view class="info-right">
+        <text class="category">{{newsDetail.category}}</text>
+      </view>
+    </view>
+
+    <!-- 资讯正文 -->
+    <view class="news-content">
+      <block wx:for="{{newsDetail.content}}" wx:key="index">
+        <text class="content-paragraph">{{item}}</text>
+      </block>
+      
+      <!-- 正文图片 -->
+      <block wx:for="{{newsDetail.images}}" wx:key="index">
+        <image src="{{item}}" class="content-image" mode="aspectFit" />
+      </block>
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="news-actions">
+      <view class="action-item">
+        <image src="/images/views-icon.png" class="action-icon" />
+        <text>{{newsDetail.views}}</text>
+      </view>
+      <view class="action-item" bindtap="likeNews">
+        <image src="/images/likes-icon.png" class="action-icon" />
+        <text>{{newsDetail.likes}}</text>
+      </view>
+      <view class="action-item" bindtap="shareNews">
+        <image src="/images/share-icon.png" class="action-icon" />
+        <text>分享</text>
+      </view>
+    </view>
+  </view>
+</view>

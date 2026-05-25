@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "资讯详情",
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar"
+  },
+  "navigationBarBackgroundColor": "#fff",
+  "navigationStyle": "custom",
+  "navigationBarTextStyle": "black"
+}

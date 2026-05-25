@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}垃圾分类列表 - 垃圾分类管理系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4><i class="fa fa-recycle mr-2"></i>垃圾分类列表</h4>
+                {% if current_user.is_admin() %}
+                <div class="d-flex">
+                    <form id="batchDeleteForm" action="{{ url_for('refuse_category.batch_delete_categories') }}" method="POST" style="display: inline;">
+                        <!-- 选中的分类ID将通过JavaScript动态添加 -->
+                        <button type="submit" class="btn btn-danger mr-5" onclick="return confirmBatchDelete();">
+                            <i class="fa fa-trash-o mr-2"></i>批量删除
+                        </button>
+                    </form>
+                    <span class="mx-2"></span>
+                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <i class="fa fa-plus mr-2"></i>添加分类
+                </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <form method="GET" action="{{ url_for('refuse_category.list_categories') }}" class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-search"></i></span>
+                            <input type="text" class="form-control" name="search" placeholder="搜索分类名称" value="{{ search_query }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control" name="type_id">
+                            <option value="">所有垃圾类型</option>
+                            {% for type in refuse_types %}
+                            <option value="{{ type.id }}" {% if selected_type == type.id|string %}selected{% endif %}>{{ type.type_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control" name="sort_by">
+                            <option value="name" {% if sort_by == 'name' %}selected{% endif %}>按名称排序</option>
+                            <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>按创建时间排序</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa fa-filter mr-2"></i>筛选
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            {% if categories %}
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="bg-light">
+                        <tr>
+                            {% if current_user.is_admin() %}
+                            <th style="width: 50px;">
+                                <input type="checkbox" id="selectAll" class="form-check-input">
+                            </th>
+                            {% endif %}
+                            <th>ID</th>
+                            <th>分类名称</th>
+                            <th>所属类型</th>
+                            <th>描述</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                        <tr class="table-row-hover">
+                            {% if current_user.is_admin() %}
+                            <td>
+                                <input type="checkbox" name="category_ids" value="{{ category.id }}" class="form-check-input category-checkbox">
+                            </td>
+                            {% endif %}
+                            <td>{{ category.id }}</td>
+                            <td>
+                                <div class="d-flex items-center">
+                                    {% if category.image_url %}
+                                    <img src="{{ category.image_url }}" alt="{{ category.category_name }}" class="mr-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                    {% else %}
+                                    <i class="fa fa-recycle mr-2 text-success" style="font-size: 20px;"></i>
+                                    {% endif %}
+                                    {{ category.category_name }}
+                                </div>
+                            </td>
+                            <td>
+                                {{ category.refuse_type.type_name }}
+                            </td>
+                            <td>{{ category.description|truncate(80) }}</td>
+                            <td>{{ category.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if current_user.is_admin() %}
+                                <div class="d-flex">
+                                    <a href="{{ url_for('refuse_category.edit_category', category_id=category.id) }}" class="btn btn-secondary btn-sm mr-4">
+                                        <i class="fa fa-edit mr-1"></i>编辑
+                                    </a>
+                                    <span class="mx-1"></span>
+                                    <form action="{{ url_for('refuse_category.delete_category', category_id=category.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定要删除该垃圾分类吗？');">
+                                            <i class="fa fa-trash mr-1"></i>删除
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-6 text-muted">
+                <i class="fa fa-search fa-5x mb-3"></i>
+                <h4>暂无符合条件的垃圾分类</h4>
+                {% if current_user.is_admin() %}
+                <p class="mt-2">点击下方按钮添加第一个垃圾分类</p>
+                <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <i class="fa fa-plus mr-2"></i>添加分类
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // 全选/取消全选功能
+    const selectAllCheckbox = document.getElementById('selectAll');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.category-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    }
+    
+    // 批量删除确认
+    function confirmBatchDelete() {
+        const selectedCheckboxes = document.querySelectorAll('.category-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+            alert('请至少选择一个垃圾分类进行删除');
+            return false;
+        }
+        
+        // 将选中的复选框值添加到表单中
+        const form = document.getElementById('batchDeleteForm');
+        if (!form) {
+            alert('批量删除功能不可用');
+            return false;
+        }
+        
+        // 移除已有的复选框
+        const existingInputs = form.querySelectorAll('input[name="category_ids"]');
+        existingInputs.forEach(input => input.remove());
+        
+        // 添加新的复选框
+        selectedCheckboxes.forEach(checkbox => {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'category_ids';
+            hiddenInput.value = checkbox.value;
+            form.appendChild(hiddenInput);
+        });
+        
+        return confirm(`确定要删除选中的 ${selectedCheckboxes.length} 个垃圾分类吗？`);
+    }
+</script>
+
+    <!-- 添加垃圾分类的模态框 -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addCategoryModalLabel">添加垃圾分类</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addCategoryForm" method="POST" action="{{ url_for('refuse_category.add_category') }}">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="type_id">垃圾类型</label>
+                            <select class="form-control" id="type_id" name="type_id" required>
+                                {% for type in refuse_types %}
+                                <option value="{{ type.id }}">{{ type.type_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="category_name">分类名称</label>
+                            <input type="text" class="form-control" id="category_name" name="category_name" placeholder="请输入分类名称" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">描述</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="请输入分类描述"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="sorting_guide">分类指南</label>
+                            <textarea class="form-control" id="sorting_guide" name="sorting_guide" rows="3" placeholder="请输入分类指南"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="image_url">图片URL</label>
+                            <input type="text" class="form-control" id="image_url" name="image_url" placeholder="请输入图片URL">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 为添加分类表单添加提交事件处理
+        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+            // 这里可以添加表单验证逻辑
+            // 表单将正常提交到后端处理
+        });
+    </script>
+{% endblock %}

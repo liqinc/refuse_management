@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}垃圾资讯列表 - 垃圾分类管理系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4><i class="fa fa-newspaper-o mr-2"></i>垃圾资讯列表</h4>
+                {% if current_user.is_admin() %}
+                <div class="d-flex">
+                    <form id="batchDeleteForm" action="{{ url_for('refuse_news.batch_delete_news') }}" method="POST" style="display: inline;">
+                        <!-- 选中的资讯ID将通过JavaScript动态添加 -->
+                        <button type="submit" class="btn btn-danger mr-5" onclick="return confirmBatchDelete();">
+                            <i class="fa fa-trash-o mr-2"></i>批量删除
+                        </button>
+                    </form>
+                    <span class="mx-2"></span>
+                    <a href="{{ url_for('refuse_news.add_news') }}" class="btn btn-light">
+                        <i class="fa fa-plus mr-2"></i>添加资讯
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <form method="GET" action="{{ url_for('refuse_news.list_news') }}" class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-search"></i></span>
+                            <input type="text" class="form-control" name="search" placeholder="搜索资讯标题或内容" value="{{ search_query }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control" name="category_id">
+                            <option value="">所有资讯分类</option>
+                            <option value="政策法规" {% if selected_category == '政策法规' %}selected{% endif %}>政策法规</option>
+                            <option value="科普知识" {% if selected_category == '科普知识' %}selected{% endif %}>科普知识</option>
+                            <option value="行业动态" {% if selected_category == '行业动态' %}selected{% endif %}>行业动态</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control" name="sort_by">
+                            <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>按发布时间排序</option>
+                            <option value="title" {% if sort_by == 'title' %}selected{% endif %}>按标题排序</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa fa-filter mr-2"></i>筛选
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {% if news_list.items %}
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="bg-light">
+                        <tr>
+                            {% if current_user.is_admin() %}
+                            <th style="width: 50px;">
+                                <input type="checkbox" id="selectAll" class="form-check-input">
+                            </th>
+                            {% endif %}
+                            <th>ID</th>
+                            <th>标题</th>
+                            <th>副标题</th>
+                            <th>发布日期</th>
+                            <th>作者</th>
+                            <th>来源</th>
+                            <th>浏览量</th>
+                            <th>点赞数</th>
+                            <th>分类</th>
+                            <th>封面图片路径</th>
+                            <th>内容</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for news in news_list.items %}
+                        <tr class="table-row-hover">
+                            {% if current_user.is_admin() %}
+                            <td>
+                                <input type="checkbox" name="news_ids" value="{{ news.id }}" class="form-check-input news-checkbox">
+                            </td>
+                            {% endif %}
+                            <td>{{ news.id }}</td>
+                            <td>
+                                <div class="d-flex items-center">
+                                    {% if news.cover_image and news.cover_image.startswith(('http://', 'https://')) %}
+                                    <img src="{{ news.cover_image }}" alt="{{ news.title }}" class="mr-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                    {% else %}
+                                    <i class="fa fa-newspaper-o mr-2 text-primary" style="font-size: 20px;"></i>
+                                    {% endif %}
+                                    {{ news.title }}
+                                </div>
+                            </td>
+                            <td>{{ news.subtitle|truncate(20) }}</td>
+                            <td>{{ news.publish_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ news.author }}</td>
+                            <td>{{ news.source }}</td>
+                            <td>{{ news.views }}</td>
+                            <td>{{ news.likes }}</td>
+                            <td>{{ news.category }}</td>
+                            <td class="text-break" style="max-width: 150px;">{{ news.cover_image or '-' }}</td>
+                            <td>
+                                <div class="content-container">
+                                    <div class="content-preview">{{ news.content|truncate(50, True) }}</div>
+                                    {% if news.content|length > 50 %}
+                                    <div class="content-full" style="display: none;">{{ news.content }}</div>
+                                    <button class="toggle-content btn btn-link p-0 text-primary" data-id="{{ news.id }}">
+                                        <i class="fa fa-chevron-down"></i> 展开
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if current_user.is_admin() %}
+                                <div class="d-flex">
+                                    <a href="{{ url_for('refuse_news.edit_news', news_id=news.id) }}" class="btn btn-secondary btn-sm mr-4">
+                                        <i class="fa fa-edit mr-1"></i>编辑
+                                    </a>
+                                    <span class="mx-1"></span>
+                                    <form action="{{ url_for('refuse_news.delete_news', news_id=news.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定要删除该资讯吗？');">
+                                            <i class="fa fa-trash mr-1"></i>删除
+                                        </button>
+                                    </form>
+                                </div>
+                                {% else %}
+                                <!-- 非管理员无操作权限 -->
+                                <span class="text-muted">无权限</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页控件 -->
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+                <p class="text-muted">显示第 {{ news_list.page_start }}-{{ news_list.page_end }} 条，共 {{ news_list.total }} 条记录</p>
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item {% if not news_list.has_prev %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('refuse_news.list_news', page=news_list.prev_num, **query_params) }}">上一页</a>
+                        </li>
+                        {% for page_num in news_list.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                            {% if page_num %}
+                                <li class="page-item {% if page_num == news_list.page %}active{% endif %}">
+                                    <a class="page-link" href="{{ url_for('refuse_news.list_news', page=page_num, **query_params) }}">{{ page_num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="page-item {% if not news_list.has_next %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('refuse_news.list_news', page=news_list.next_num, **query_params) }}">下一页</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% else %}
+            <div class="text-center py-6 text-muted">
+                <i class="fa fa-newspaper-o fa-5x mb-3"></i>
+                <h4>暂无符合条件的垃圾资讯</h4>
+                {% if current_user.is_admin() %}
+                <p class="mt-2">点击下方按钮添加第一条垃圾资讯</p>
+                <a href="{{ url_for('refuse_news.add_news') }}" class="btn btn-primary mt-3">
+                    <i class="fa fa-plus mr-2"></i>添加资讯
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // 全选/取消全选功能
+    const selectAllCheckbox = document.getElementById('selectAll');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.news-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    }
+    
+    // 批量删除确认
+    function confirmBatchDelete() {
+        const selectedCheckboxes = document.querySelectorAll('.news-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+            alert('请至少选择一条垃圾资讯');
+            return false;
+        }
+        
+        // 创建隐藏输入字段，用于提交选中的ID
+        const form = document.getElementById('batchDeleteForm');
+        
+        // 移除旧的隐藏字段（如果有）
+        const oldInputs = form.querySelectorAll('input[name="news_ids"]');
+        oldInputs.forEach(input => input.remove());
+        
+        // 添加新的隐藏字段
+        selectedCheckboxes.forEach(checkbox => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'news_ids';
+            input.value = checkbox.value;
+            form.appendChild(input);
+        });
+        
+        return confirm(`确定要删除选中的 ${selectedCheckboxes.length} 条垃圾资讯吗？`);
+    }
+    
+    // 内容展开/收起功能
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButtons = document.querySelectorAll('.toggle-content');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const contentPreview = this.parentElement.querySelector('.content-preview');
+                const contentFull = this.parentElement.querySelector('.content-full');
+                const icon = this.querySelector('i');
+                const text = this.textContent.trim().replace(/展开|收起/, '');
+                
+                if (contentFull.style.display === 'none' || contentFull.style.display === '') {
+                    contentPreview.style.display = 'none';
+                    contentFull.style.display = 'block';
+                    icon.className = 'fa fa-chevron-up';
+                    this.innerHTML = '<i class="fa fa-chevron-up"></i> 收起';
+                } else {
+                    contentPreview.style.display = 'block';
+                    contentFull.style.display = 'none';
+                    icon.className = 'fa fa-chevron-down';
+                    this.innerHTML = '<i class="fa fa-chevron-down"></i> 展开';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

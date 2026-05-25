@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}用户管理 - 垃圾分类管理系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4><i class="fa fa-users mr-2"></i>用户管理</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <form method="GET" action="{{ url_for('user_profile.list_users') }}" class="row g-3">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-search"></i></span>
+                            <input type="text" class="form-control" name="search" placeholder="搜索用户名、邮箱、姓名" value="{{ search_query }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control" name="role">
+                            <option value="">所有角色</option>
+                            <option value="user" {% if selected_role == 'user' %}selected{% endif %}>普通用户</option>
+                            <option value="admin" {% if selected_role == 'admin' %}selected{% endif %}>管理员</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control" name="sort_by">
+                            <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>按注册时间排序</option>
+                            <option value="username" {% if sort_by == 'username' %}selected{% endif %}>按用户名排序</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa fa-filter mr-2"></i>筛选
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {% if users.items %}
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>姓名</th>
+                            <th>角色</th>
+                            <th>注册时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users.items %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.full_name or '-' }}</td>
+                            <td>
+                                {% if user.is_admin() %}
+                                <span class="badge bg-danger">管理员</span>
+                                {% else %}
+                                <span class="badge bg-secondary">普通用户</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('user_profile.edit_profile', user_id=user.id) }}" class="btn btn-secondary btn-sm">
+                                        <i class="fa fa-edit mr-1"></i>编辑
+                                    </a>
+                                    {% if current_user.id != user.id %}
+                                    <form action="{{ url_for('user_profile.toggle_admin', user_id=user.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            {% if user.is_admin() %}
+                                            <i class="fa fa-user mr-1"></i>设为普通用户
+                                            {% else %}
+                                            <i class="fa fa-star mr-1"></i>设为管理员
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                    <form action="{{ url_for('user_profile.delete_user', user_id=user.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定要删除用户 {{ user.username }} 吗？');">
+                                            <i class="fa fa-trash mr-1"></i>删除
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页控件 -->
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+                <p class="text-muted">显示第 {{ users.page_start }}-{{ users.page_end }} 条，共 {{ users.total }} 条记录</p>
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item {% if not users.has_prev %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('user_profile.list_users', page=users.prev_num, **query_params) }}">上一页</a>
+                        </li>
+                        {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                            {% if page_num %}
+                                <li class="page-item {% if page_num == users.page %}active{% endif %}">
+                                    <a class="page-link" href="{{ url_for('user_profile.list_users', page=page_num, **query_params) }}">{{ page_num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="page-item {% if not users.has_next %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('user_profile.list_users', page=users.next_num, **query_params) }}">下一页</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% else %}
+            <div class="text-center py-6 text-muted">
+                <i class="fa fa-search fa-5x mb-3"></i>
+                <h4>暂无符合条件的用户</h4>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

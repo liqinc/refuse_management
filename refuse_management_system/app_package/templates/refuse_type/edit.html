@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}编辑垃圾类型 - 垃圾分类管理系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="fa fa-pencil mr-2"></i>编辑垃圾类型</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('refuse_type.edit_type', type_id=type.id) }}">
+                        <div class="mb-4">
+                            <label for="type_name" class="form-label">类型名称 <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-cube"></i></span>
+                                <input type="text" class="form-control" id="type_name" name="type_name" value="{{ type.type_name }}" required placeholder="请输入垃圾类型名称">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="description" class="form-label">类型描述</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-file-text-o"></i></span>
+                                <textarea class="form-control" id="description" name="description" rows="3" placeholder="请输入垃圾类型描述">{{ type.description }}</textarea>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="icon_url" class="form-label">图标URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-image"></i></span>
+                                <input type="text" class="form-control" id="icon_url" name="icon_url" value="{{ type.icon_url or '' }}" placeholder="请输入图标URL（可选）">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="color" class="form-label">类型颜色</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-paint-brush"></i></span>
+                                <input type="color" id="color" name="color" value="{{ type.color or '#1296db' }}" title="选择颜色" style="width: 50px; height: 38px; border: 1px solid #ced4da;">
+                                <input type="text" class="form-control" id="color-text" name="color-text" value="{{ type.color or '#1296db' }}" placeholder="颜色值（可选）">
+                            </div>
+                            <div class="form-text text-muted mt-1">为垃圾类型选择一个代表性的颜色</div>
+                        </div>
+                        <script>
+                            // 确保DOM加载完成后执行
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const colorPicker = document.getElementById('color');
+                                const colorText = document.getElementById('color-text');
+                                
+                                // 使用input事件监听器，这是标准的颜色变化事件
+                                colorPicker.addEventListener('input', function() {
+                                    colorText.value = this.value;
+                                });
+                                
+                                // 添加change事件监听器作为备用，确保所有浏览器兼容性
+                                colorPicker.addEventListener('change', function() {
+                                    colorText.value = this.value;
+                                });
+                                
+                                // 文本输入事件处理
+                                colorText.addEventListener('input', function() {
+                                    if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+                                        colorPicker.value = this.value;
+                                    }
+                                });
+                                
+                                // 确保初始值一致
+                                colorText.value = colorPicker.value;
+                            });
+                        </script>
+                        {% if type.icon_url %}
+                        <div class="mb-4">
+                            <p class="text-sm text-muted mb-2">当前图标:</p>
+                            <img src="{{ type.icon_url }}" alt="{{ type.type_name }}" style="max-width: 100px; max-height: 100px;">
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('refuse_type.list_types') }}" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left mr-2"></i>返回
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save mr-2"></i>保存
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}添加垃圾分类 - 垃圾分类管理系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="fa fa-plus-circle mr-2"></i>添加垃圾分类</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('refuse_category.add_category') }}">
+                        <div class="mb-4">
+                            <label for="category_name" class="form-label">分类名称 <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-recycle"></i></span>
+                                <input type="text" class="form-control" id="category_name" name="category_name" required placeholder="请输入垃圾分类名称">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="type_id" class="form-label">所属垃圾类型 <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-cube"></i></span>
+                                <select class="form-control" id="type_id" name="type_id" required>
+                                    <option value="">请选择垃圾类型</option>
+                                    {% for type in refuse_types %}
+                                    <option value="{{ type.id }}">{{ type.type_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="description" class="form-label">分类描述</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-file-text-o"></i></span>
+                                <textarea class="form-control" id="description" name="description" rows="4" placeholder="请输入垃圾分类描述"></textarea>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="image_url" class="form-label">图片URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-image"></i></span>
+                                <input type="text" class="form-control" id="image_url" name="image_url" placeholder="请输入图片URL（可选）">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="environment_impact" class="form-label">环境影响</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-leaf"></i></span>
+                                <textarea class="form-control" id="environment_impact" name="environment_impact" rows="3" placeholder="请输入该垃圾对环境的影响（可选）"></textarea>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="recycling_method" class="form-label">回收方法</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-refresh"></i></span>
+                                <textarea class="form-control" id="recycling_method" name="recycling_method" rows="3" placeholder="请输入该垃圾的回收方法（可选）"></textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('refuse_category.list_categories') }}" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left mr-2"></i>返回
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save mr-2"></i>保存
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

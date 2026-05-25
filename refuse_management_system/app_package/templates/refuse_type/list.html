@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}垃圾类型管理 - 垃圾分类管理系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4><i class="fa fa-cubes mr-2"></i>垃圾类型管理</h4>
+                {% if current_user.is_admin() %}
+                <div class="d-flex">
+                    <form id="batchDeleteForm" action="{{ url_for('refuse_type.batch_delete_types') }}" method="POST" style="display: inline;">
+                        <!-- 选中的类型ID将通过JavaScript动态添加 -->
+                        <button type="submit" class="btn btn-danger mr-5" onclick="return confirmBatchDelete();">
+                            <i class="fa fa-trash-o mr-2"></i>批量删除
+                        </button>
+                    </form>
+                    <span class="mx-2"></span>
+                    <a href="{{ url_for('refuse_type.add_type') }}" class="btn btn-light">
+                        <i class="fa fa-plus mr-2"></i>添加垃圾类型
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            {% if types %}
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="bg-light">
+                        <tr>
+                            {% if current_user.is_admin() %}
+                            <th style="width: 50px;">
+                                <input type="checkbox" id="selectAll" class="form-check-input">
+                            </th>
+                            {% endif %}
+                            <th>ID</th>
+                            <th>类型名称</th>
+                            <th>颜色</th>
+                            <th>描述</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for type in types %}
+                        <tr class="table-row-hover">
+                            {% if current_user.is_admin() %}
+                            <td>
+                                <input type="checkbox" name="type_ids" value="{{ type.id }}" class="form-check-input type-checkbox">
+                            </td>
+                            {% endif %}
+                            <td>{{ type.id }}</td>
+                            <td>
+                                <div class="d-flex items-center">
+                                    {% if type.icon_url %}
+                                    <img src="{{ type.icon_url }}" alt="{{ type.type_name }}" class="mr-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                    {% else %}
+                                    <i class="fa fa-cube mr-2 text-primary" style="font-size: 20px;"></i>
+                                    {% endif %}
+                                    {{ type.type_name }}
+                                    {% if type.color %}
+                                    <span class="ml-2" style="display: inline-block; width: 20px; height: 20px; border-radius: 50%; background-color: {{ type.color }}; border: 1px solid #ddd;"></span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if type.color %}
+                                <div class="d-flex items-center">
+                                    <span style="display: inline-block; width: 30px; height: 30px; border-radius: 5px; background-color: {{ type.color }}; border: 1px solid #ddd;"></span>
+                                    <span class="ml-2">{{ type.color }}</span>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">未设置</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ type.description|truncate(80) }}</td>
+                            <td>{{ type.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if current_user.is_admin() %}
+                                <div class="d-flex">
+                                    <a href="{{ url_for('refuse_type.edit_type', type_id=type.id) }}" class="btn btn-secondary btn-sm mr-4">
+                                        <i class="fa fa-edit mr-1"></i>编辑
+                                    </a>
+                                    <span class="mx-1"></span>
+                                    <form action="{{ url_for('refuse_type.delete_type', type_id=type.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定要删除该垃圾类型吗？删除后相关的垃圾分类也将被删除。');">
+                                            <i class="fa fa-trash mr-1"></i>删除
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-muted">
+                <i class="fa fa-cubes fa-5x mb-3"></i>
+                <p>暂无垃圾类型数据</p>
+                {% if current_user.is_admin() %}
+                <a href="{{ url_for('refuse_type.add_type') }}" class="btn btn-primary mt-2">
+                    <i class="fa fa-plus mr-2"></i>添加垃圾类型
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // 全选/取消全选功能
+    const selectAllCheckbox = document.getElementById('selectAll');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.type-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    }
+    
+    // 批量删除确认
+    function confirmBatchDelete() {
+        const selectedCheckboxes = document.querySelectorAll('.type-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+            alert('请至少选择一个垃圾类型进行删除');
+            return false;
+        }
+        
+        // 将选中的复选框值添加到表单中
+        const form = document.getElementById('batchDeleteForm');
+        if (!form) {
+            alert('批量删除功能不可用');
+            return false;
+        }
+        
+        // 移除已有的复选框
+        const existingInputs = form.querySelectorAll('input[name="type_ids"]');
+        existingInputs.forEach(input => input.remove());
+        
+        // 添加新的复选框
+        selectedCheckboxes.forEach(checkbox => {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'type_ids';
+            hiddenInput.value = checkbox.value;
+            form.appendChild(hiddenInput);
+        });
+        
+        return confirm(`确定要删除选中的 ${selectedCheckboxes.length} 个垃圾类型吗？删除后相关的垃圾分类也将被删除。`);
+    }
+</script>
+{% endblock %}

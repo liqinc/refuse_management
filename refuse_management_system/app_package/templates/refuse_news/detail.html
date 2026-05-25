@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ news.title }} - 垃圾分类管理系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4><i class="fa fa-newspaper-o mr-2"></i>垃圾资讯详情</h4>
+                <div class="btn-group" role="group">
+                    {% if current_user.is_admin() %}
+                    <a href="{{ url_for('refuse_news.edit_news', news_id=news.id) }}" class="btn btn-light btn-sm">
+                        <i class="fa fa-edit mr-1"></i>编辑
+                    </a>
+                    <form action="{{ url_for('refuse_news.delete_news', news_id=news.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-light btn-sm" onclick="return confirm('确定要删除该资讯吗？');">
+                            <i class="fa fa-trash mr-1"></i>删除
+                        </button>
+                    </form>
+                    {% endif %}
+                    <a href="{{ url_for('refuse_news.list_news') }}" class="btn btn-light btn-sm">
+                        <i class="fa fa-arrow-left mr-1"></i>返回列表
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <h2 class="font-bold mb-2">{{ news.title }}</h2>
+                <div class="text-muted text-sm mb-4">
+                        <i class="fa fa-calendar mr-1"></i> {{ news.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                        {% if news.author %}
+                        <i class="fa fa-user ml-3 mr-1"></i> {{ news.author }}
+                        {% endif %}
+                        <i class="fa fa-eye ml-3 mr-1"></i> 浏览量: {{ news.views }}
+                    </div>
+                    {% if news.cover_image and news.cover_image.startswith(('http://', 'https://')) %}
+                    <img src="{{ news.cover_image }}" alt="{{ news.title }}" class="img-fluid mb-4" style="max-height: 400px; object-fit: contain;">
+                    {% endif %}
+                <div class="news-content">
+                    {% if news.content %}
+                    {{ news.content | replace('\n', '<br>') | safe }}
+                    {% else %}
+                    <p class="text-muted">暂无内容</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- 相关资讯 -->
+            {% if related_news %}
+            <div class="mt-6">
+                <h4 class="font-bold mb-3">
+                    <i class="fa fa-newspaper-o mr-2"></i>相关资讯推荐
+                </h4>
+                <div class="row">
+                    {% for related in related_news %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            {% if related.cover_image and related.cover_image.startswith(('http://', 'https://')) %}
+                <img src="{{ related.cover_image }}" class="card-img-top" alt="{{ related.title }}" style="height: 120px; object-fit: cover;">
+                {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ related.title|truncate(50) }}</h5>
+                                <p class="text-muted text-sm">
+                                    <i class="fa fa-calendar mr-1"></i> {{ related.created_at.strftime('%Y-%m-%d') }}
+                                </p>
+                                <a href="{{ url_for('refuse_news.detail_news', news_id=related.id) }}" class="btn btn-primary btn-sm">
+                                    阅读详情
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

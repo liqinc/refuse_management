@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}垃圾类型详情 - 垃圾分类管理系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4><i class="fa fa-cube mr-2"></i>垃圾类型详情</h4>
+                <div class="btn-group" role="group">
+                    {% if current_user.is_admin() %}
+                    <a href="{{ url_for('refuse_type.edit_type', type_id=type.id) }}" class="btn btn-light btn-sm">
+                        <i class="fa fa-edit mr-1"></i>编辑
+                    </a>
+                    <form action="{{ url_for('refuse_type.delete_type', type_id=type.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-light btn-sm" onclick="return confirm('确定要删除该垃圾类型吗？删除后相关的垃圾分类也将被删除。');">
+                            <i class="fa fa-trash mr-1"></i>删除
+                        </button>
+                    </form>
+                    {% endif %}
+                    <a href="{{ url_for('refuse_type.list_types') }}" class="btn btn-light btn-sm">
+                        <i class="fa fa-arrow-left mr-1"></i>返回列表
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    {% if type.icon_url %}
+                    <img src="{{ type.icon_url }}" alt="{{ type.type_name }}" style="max-width: 200px; max-height: 200px; object-fit: contain;">
+                    {% else %}
+                    <div class="bg-gray-200 rounded-full w-32 h-32 mx-auto flex items-center justify-center">
+                        <i class="fa fa-cube text-primary fa-5x"></i>
+                    </div>
+                    {% endif %}
+                    <h3 class="mt-4 font-bold">{{ type.type_name }}</h3>
+                </div>
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <h5 class="font-bold text-muted">类型描述</h5>
+                        <p>{{ type.description or '暂无描述' }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-bold text-muted">类型颜色</h5>
+                        {% if type.color %}
+                            <div class="d-flex items-center">
+                                <span style="display: inline-block; width: 40px; height: 40px; border-radius: 5px; background-color: {{ type.color }}; border: 1px solid #ddd;"></span>
+                                <span class="ml-3 text-lg">{{ type.color }}</span>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">未设置颜色</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-bold text-muted">包含的垃圾数量</h5>
+                        <p><span class="badge bg-primary text-white px-3 py-1 text-lg">{{ type.categories|length }}</span></p>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="font-bold text-muted">创建信息</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-calendar-check-o mr-2 text-primary"></i>创建时间: {{ type.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</li>
+                            <li><i class="fa fa-refresh mr-2 text-primary"></i>更新时间: {{ type.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 该类型下的垃圾分类列表 -->
+            {% if type.categories %}
+            <div class="mt-6">
+                <h4 class="font-bold mb-3">
+                    <i class="fa fa-recycle mr-2"></i>包含的垃圾分类
+                </h4>
+                <div class="row">
+                    {% for category in type.categories %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex items-center mb-2">
+                                    {% if category.image_url %}
+                                    <img src="{{ category.image_url }}" alt="{{ category.category_name }}" class="mr-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                    {% else %}
+                                    <i class="fa fa-recycle mr-2 text-success"></i>
+                                    {% endif %}
+                                    <h5 class="card-title m-0">{{ category.category_name }}</h5>
+                                </div>
+                                <p class="card-text text-muted text-sm">{{ category.description|truncate(80) }}</p>
+                                <a href="{{ url_for('refuse_category.detail_category', category_id=category.id) }}" class="btn btn-primary btn-sm mt-2">
+                                    查看详情
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="mt-6 text-center py-4 text-muted">
+                <p>该垃圾类型下暂无垃圾分类</p>
+                {% if current_user.is_admin() %}
+                <a href="{{ url_for('refuse_category.add_category') }}" class="btn btn-primary mt-2">
+                    <i class="fa fa-plus mr-2"></i>添加垃圾分类
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
